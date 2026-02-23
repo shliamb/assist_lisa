@@ -5,6 +5,7 @@ pillow==12.1.1
 luma.core==2.5.3
 luma.oled==3.14.0
 sox
+requests
 
 
 # pip install -r requirements.txt

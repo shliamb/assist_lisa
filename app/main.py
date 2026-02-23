@@ -1,4 +1,4 @@
-from config import BUTTON_OFF_PIN, BUTTON_PIN
+from config import BUTTON_OFF_PIN, BUTTON_PIN, SUDO_PASS
 from network import ip
 import time
 from buttons import status_button
@@ -9,7 +9,6 @@ from display import image
 import threading
 from audio import Audio
 
-audio = Audio()
 
 
 
@@ -59,22 +58,22 @@ def main() -> None:
             command = ["sudo", "poweroff"]
             command = ["sudo", "poweroff"]
 
-            # proc = subprocess.Popen(
-            #     command,
-            #     stdin=subprocess.PIPE,
-            #     stdout=subprocess.PIPE,
-            #     stderr=subprocess.PIPE,
-            #     universal_newlines=True
-            # )
-            # proc.communicate(input = SUDO_PASS + "\n", timeout=30)
-            # proc = subprocess.Popen(
-            #     command,
-            #     stdin=subprocess.PIPE,
-            #     stdout=subprocess.PIPE,
-            #     stderr=subprocess.PIPE,
-            #     universal_newlines=True
-            # )
-            # proc.communicate(input = SUDO_PASS + "\n", timeout=30)            
+            proc = subprocess.Popen(
+                command,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True
+            )
+            proc.communicate(input = SUDO_PASS + "\n", timeout=30)
+            proc = subprocess.Popen(
+                command,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                universal_newlines=True
+            )
+            proc.communicate(input = SUDO_PASS + "\n", timeout=30)            
 
         elif flag_off < 10 and flag_false > 0 :
             image(get_ip, 5, 10)
@@ -94,6 +93,8 @@ def main() -> None:
 
         # CLICK BUTTON ACTION
         status_hold = status_button(BUTTON_PIN)
+
+        audio = Audio()
 
         recording_active = audio.get_recording_active()
         record_thread = None
