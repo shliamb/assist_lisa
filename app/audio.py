@@ -1,6 +1,7 @@
 import subprocess
 import time
 import os
+from config import GAIN
 
 
 
@@ -11,7 +12,7 @@ class Audio:
 
 
     @staticmethod
-    def play_audio(filename: str, gain_db=10) -> bool:
+    def play_audio(filename: str, gain_db=GAIN) -> bool:
         """
             Воспроизведение аудиофайла с усилением через play (sox)
             

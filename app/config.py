@@ -10,7 +10,7 @@ HISTORY_LIMIT = 20
 
 
 # AUDIO:
-GAIN = 10
+GAIN = 1
 
 # YANDEX SpeechKit:
 SAVE_FILE = False # Сохранять аудио файл
