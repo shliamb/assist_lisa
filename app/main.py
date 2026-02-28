@@ -47,7 +47,7 @@ def main() -> None:
 
             '''процент занятости памяти'''
 
-        memory_percent = memory_percent_get
+        memory_percent = memory_percent_get()
         if flag_memory_get > 20:
             image(f"занято озу {memory_percent}%", 0, 5)
             flag_memory_get = 0
