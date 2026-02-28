@@ -33,10 +33,13 @@ def main() -> None:
         if not get_ip:
             #print("wifi is not")
             image("вай-фай не подключён", 5, 10)
+            audio.play_audio("./wavs/2.wav")
+
             flag_ip = 0
             
         elif flag_ip == 0 and get_ip:
             print(f"ip : {get_ip}")
+            audio.play_audio("./wavs/4.wav")
             image(get_ip, 5, 10)
             time.sleep(5)
             # print("end 5 sec")
@@ -51,6 +54,7 @@ def main() -> None:
 
         if button_off_status == True and flag_off > 11 :
             # print("выключаюсь")
+            audio.play_audio("./wavs/3.wav")
             image("выключаюсь(", 5, 20)
             time.sleep(2)
             flag_ip = 0
