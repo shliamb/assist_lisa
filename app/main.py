@@ -21,6 +21,8 @@ deepseek = DeepSeek()
 def main() -> None:
     """ Главная функция"""
 
+    image("█▓▒░ ELIZABET SYSTEMS ░▒▓█", 5, 10)
+
     flag_ip = 0
     flag_off = 0
     flag_false = 0
@@ -134,18 +136,6 @@ def main() -> None:
                 speechkit.stream_synthesis(text_stream_ds)
                 record_thread = None
 
-
-            # answer_tr = transcription(name_file)
-            # if not answer_tr:
-            #     print("WTF error")
-            #     return
-            
-            # answer_ds = respons_ds(answer_tr)
-            # print("answer_ds:", answer_ds)
-
-            # name_file = get_voice(answer_ds)
-
-            # audio.play_audio(f"./{name_file}", 15)
 
 
         time.sleep(0.1)
