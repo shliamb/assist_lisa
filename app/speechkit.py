@@ -15,7 +15,7 @@ import yandex.cloud.ai.stt.v3.stt_service_pb2_grpc as stt_service_pb2_grpc
 
 
 class YaSpeechKit:
-    def init(self):
+    def __init__(self):
         # PUSH BUTTON ACT:
         self.record_process = None
         self.recording_active = False
@@ -40,9 +40,7 @@ class YaSpeechKit:
 
 
     def get_recording_active(self):
-        print(self.recording_active)
-        jopa = self.recording_active.copy()
-        return jopa
+        return self.recording_active
 
 
     def change_recording_active(self, status: bool):

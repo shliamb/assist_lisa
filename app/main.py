@@ -110,29 +110,29 @@ def main() -> None:
         status_hold = status_button(BUTTON_PIN)
 
         recording_active = speechkit.get_recording_active()
-        print(recording_active)
-        # record_thread = None
+        #print(recording_active)
+        record_thread = None
 
-        # if status_hold == True and not recording_active:
-        #     image("записываю вопрос,", 5, 10)
-        #     image("говори", 5, 20 )
-        #     speechkit.change_recording_active(True)
+        if status_hold == True and not recording_active:
+            image("записываю вопрос,", 5, 10)
+            image("говори", 5, 20 )
+            speechkit.change_recording_active(True)
 
-        #     # Запуск в отдельном потоке
-        #     record_thread = threading.Thread(target=speechkit.stream_mic_record)
-        #     record_thread.start()
+            # Запуск в отдельном потоке
+            record_thread = threading.Thread(target=speechkit.stream_mic_record)
+            record_thread.start()
 
-        # elif status_hold == False and recording_active:
-        #     print("Останавливаю запись...")
-        #     speechkit.change_recording_active(False)
-        #     if record_thread:
-        #         record_thread.join()
-        #     record_thread = None
+        elif status_hold == False and recording_active:
+            print("Останавливаю запись...")
+            speechkit.change_recording_active(False)
+            if record_thread:
+                record_thread.join()
+            record_thread = None
 
-        #     input_question = speechkit.get_last_transcription()
+            input_question = speechkit.get_last_transcription()
 
-        #     text_stream_ds = deepseek.stream_llm_response(input_question)
-        #     speechkit.stream_synthesis(text_stream_ds)
+            text_stream_ds = deepseek.stream_llm_response(input_question)
+            speechkit.stream_synthesis(text_stream_ds)
 
 
             # answer_tr = transcription(name_file)
