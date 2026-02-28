@@ -21,7 +21,7 @@ def main() -> None:
     flag_off = 0
     flag_false = 0
     
-    audio.play_audio("./wavs/1.wav")
+    audio.play_audio("/wavs/1.wav")
 
     while True:
 
