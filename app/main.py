@@ -137,6 +137,7 @@ def main() -> None:
                 if not input_question:
                     # Звуковая заготовка
                     print("Нет транс текста.. ")
+                    speechkit.stream_synthesis("Попробуй еще раз, я не разобрал..")
                     return
                 
                 text_stream_ds = deepseek.stream_llm_response(input_question)
