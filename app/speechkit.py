@@ -40,7 +40,9 @@ class YaSpeechKit:
 
 
     def get_recording_active(self):
-        return self.recording_active
+        print(self.recording_active)
+        jopa = self.recording_active.copy()
+        return jopa
 
 
     def change_recording_active(self, status: bool):
