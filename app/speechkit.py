@@ -147,7 +147,9 @@ class YaSpeechKit:
                         phrases.append(current_phrase.strip())
                         current_phrase = ""
 
+            print("phrases:", phrases)
             self.last_transcription = ' '.join(phrases)
+            print("1 self.last_transcription:", self.last_transcription)
                     
         except grpc._channel._Rendezvous as err:
             print(f'Error code {err._state.code}, message: {err._state.details}')

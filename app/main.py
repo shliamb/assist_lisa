@@ -132,8 +132,8 @@ def main() -> None:
             input_question = speechkit.get_last_transcription()
             print("input_question:", input_question)
 
-            text_stream_ds = deepseek.stream_llm_response(input_question)
-            speechkit.stream_synthesis(text_stream_ds)
+            # text_stream_ds = deepseek.stream_llm_response(input_question)
+            # speechkit.stream_synthesis(text_stream_ds)
 
 
             # answer_tr = transcription(name_file)
