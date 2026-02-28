@@ -8,6 +8,7 @@ import subprocess
 from display import image 
 import threading
 from audio import Audio
+from memory import memory_percent_get
 
 audio = Audio()
 
@@ -20,18 +21,16 @@ def main() -> None:
     flag_ip = 0
     flag_off = 0
     flag_false = 0
+    flag_memory_get = 0
     
     audio.play_audio("./wavs/1.wav")
 
     while True:
-
-
-        # WORK WHITH IP
+        ''' Условия с айпи и вай фаем'''
         get_ip = ip()
-        #print(get_ip)
+        
 
         if not get_ip:
-            #print("wifi is not")
             image("вай-фай не подключён", 5, 10)
             audio.play_audio("./wavs/2.wav")
 
@@ -46,11 +45,18 @@ def main() -> None:
             image("    ", 5, 20)
             flag_ip = 1
 
-    
+            '''процент занятости памяти'''
+
+        memory_percent = memory_percent_get
+        if flag_memory_get > 20:
+            image(f"занято озу{memory_percent}%", 0, 5)
+            flag_memory_get = 0
+        else:
+            flag_memory_get += 1
+
+        '''кнопка левая'''
 
         button_off_status = status_button(BUTTON_OFF_PIN) 
-
-
 
         if button_off_status == True and flag_off > 11 :
             # print("выключаюсь")
@@ -93,10 +99,7 @@ def main() -> None:
         elif flag_off > 1 and button_off_status == False:
             flag_false += 1
             
-
-
-
-        # CLICK BUTTON ACTION
+        ''' кнпока правая со звуком'''
         status_hold = status_button(BUTTON_PIN)
 
         recording_active = audio.get_recording_active()

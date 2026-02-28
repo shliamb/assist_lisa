@@ -10,6 +10,6 @@ def image(text, x, y):
     image = Image.new('1', (device.width, device.height))
     draw = ImageDraw.Draw(image)
     # font = ImageFont.load_default() только англ
-    font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
+    font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
     draw.text((x, y), text, font=font, fill=255)
     device.display(image)
