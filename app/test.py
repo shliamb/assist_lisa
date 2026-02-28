@@ -28,15 +28,15 @@
 # # play_audio("output_audio.wav")
 
 
-# 1. 
-dialog = [
-    {"role": "user", "content": "Привет как дела?"},
-    {"role": "assistant", "content": " В целом норм.."},
-    {"role": "user", "content": "Ясно.."}
-]
-dialog = dialog[-2:]
-print(dialog)
+# # 1. 
+# dialog = [
+#     {"role": "user", "content": "Привет как дела?"},
+#     {"role": "assistant", "content": " В целом норм.."},
+#     {"role": "user", "content": "Ясно.."}
+# ]
+# dialog = dialog[-2:]
+# print(dialog)
 
-# 2.
+# # 2.
 
 
