@@ -61,6 +61,7 @@ def main() -> None:
         memory_percent = memory_percent_get()
         if flag_memory_get > 20:
             #image(f"занято озу {memory_percent}%", 0, 5)
+            display.add_display_task({"block": "line", "text": f"озу:{memory_percent}%"})
             flag_memory_get = 0
         else:
             flag_memory_get += 1
@@ -73,6 +74,9 @@ def main() -> None:
             # print("выключаюсь")
             audio.play_audio("./wavs/3.wav")
             #image("выключаюсь(", 5, 20)
+            display.add_display_task({"block": "line", "text": "выключаюсь("})
+
+            
             time.sleep(2)
             flag_ip = 0
             flag_off = 0
@@ -99,7 +103,8 @@ def main() -> None:
 
         elif flag_off < 10 and flag_false > 0 :
             #image(get_ip, 5, 10)
-            time.sleep(5)
+            display.add_display_task({"block": "line", "text": get_ip})
+            #time.sleep(5)
             #image("  ", 5, 10)
             flag_off = 0
             flag_false = 0
@@ -121,6 +126,7 @@ def main() -> None:
         if status_hold == True and not recording_active:
             #image("записываю вопрос,", 5, 10)
             #image("ГОВОРИ!", 5, 20 )
+            display.add_display_task({"block": "line", "text": "ГОВОРИ!"})
             speechkit.change_recording_active(True)
 
             # Запуск в отдельном потоке
