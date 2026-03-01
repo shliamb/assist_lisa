@@ -1,6 +1,7 @@
 import subprocess
 from config import YANDEX, GAIN, SAVE_FILE, RATE, CHUNK, RECORD_SECONDS
 import grpc
+import gc
 from typing import Generator, Iterator, Optional
 # TTS
 import yandex.cloud.ai.tts.v3.tts_pb2 as tts_pb2
@@ -148,6 +149,7 @@ class YaSpeechKit:
                         current_phrase = ""
 
             self.last_transcription = ' '.join(phrases)
+            gc.collect()
             return self.last_transcription 
                     
         except grpc._channel._Rendezvous as err:

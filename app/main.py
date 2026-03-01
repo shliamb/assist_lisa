@@ -8,6 +8,7 @@ from audio import Audio
 import subprocess
 import psutil
 import os
+import gc
 # from display import image 
 from display import Display
 import threading
@@ -75,6 +76,8 @@ class CachingParameters:
                 display.add_display_task({"block": "icon", "name": "ico_vol"})
                 display.add_display_task({"block": "volume", "text": volume})
                 self.last_volume = volume
+
+            gc.collect()
 
 
 
@@ -230,6 +233,7 @@ def main() -> None:
                 
                 text_stream_ds = deepseek.stream_llm_response(input_question)
                 speechkit.stream_synthesis(text_stream_ds)
+                gc.collect()
                 record_thread = None
 
 

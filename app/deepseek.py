@@ -1,6 +1,6 @@
 from typing import Generator, Iterator, Optional
 from openai import OpenAI, APITimeoutError, APIConnectionError, RateLimitError, APIError
-from config import API_DS, MODEL_DS, TIMEOUT, HISTORY_LIMIT
+from config import API_DS, MODEL_DS, TIMEOUT, HISTORY_LIMIT, SYS_CON
 
 
 
@@ -13,7 +13,7 @@ class DeepSeek:
             api_key=API_DS,
             base_url="https://api.deepseek.com"
         )
-        self.system_content = "Отвечаешь коротко но самое главное, немного подкалывая" # Дефолтная настройка 
+        self.system_content = SYS_CON
         self.dialog = []
         self.model = MODEL_DS
         self.timeout = TIMEOUT
