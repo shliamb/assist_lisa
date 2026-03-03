@@ -39,10 +39,20 @@
 
 
 
+# Да, продуманно. Кэш вынесен наружу — правильно.
+
+# Ошибка именно в том, что вы возвращаете None из _get_signal_raw(), а get_signal_cached() его не проверяет.
+
+# Достаточно добавить в начало get_signal_cached():
+
+# python
+# if signal is None:
+#     return 'no_signal'
+# Или обработать None в _get_signal_raw(), возвращая -100.
 
 
-
-
+# if signal is None:
+#     return 'no_signal'  # или 0, или 'unknown'
 
 
 

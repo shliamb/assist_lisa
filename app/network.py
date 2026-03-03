@@ -107,7 +107,8 @@ class Network:
         
         signal = self._get_signal_raw()
         # Конвертируем в уровень для иконки (0-3)
-        if signal >= -50: level = 'high_signal'
+        if signal is None: level = 'no_signal'
+        elif signal >= -50: level = 'high_signal'
         elif signal >= -70: level = 'mid_signal'
         elif signal >= -80: level = 'low_signal'
         else: level = 'no_signal'
