@@ -179,14 +179,13 @@ class YaSpeechKit:
         cred = grpc.ssl_channel_credentials()
         auth_meta = self.auth_meta
 
-        # # Если строка — оборачиваем в генератор
-        # if isinstance(text_stream, str):
-        #     # Если строка — превращаем в генератор с одним элементом
-        #     def text_generator():
-        #         yield {'type': 'text', 'content': text_stream}
-        #     text_stream = text_generator()
-
-        # print("\ntext_stream:", text_stream, "\ntype:", type(text_stream) )
+        # Если строка — оборачиваем в генератор
+        if isinstance(text_stream, str):
+            # Если строка — превращаем в генератор с одним элементом
+            # def text_generator():
+            #     yield {'type': 'text', 'content': text_stream}
+            # text_stream = text_generator()
+            text_stream = {'type': 'text', 'content': text_stream}
 
         # Запускаем play с чтением из stdin
         play_process = subprocess.Popen(
@@ -226,29 +225,22 @@ class YaSpeechKit:
                     return
 
 
-
+                # Отправляем текст частями из DeepSeek
                 for chunk in text_stream:
-                    # Получаем текст из разных форматов
-                    if isinstance(chunk, str):
-                        # Если это уже готовая строка (целая фраза)
-                        text = chunk
-                    elif isinstance(chunk, dict) and chunk.get('type') == 'text':
-                        # Если это словарь с контентом (из DeepSeek)
-                        text = chunk['content']
-                    else:
-                        print(f"Неподдерживаемый тип чанка: {type(chunk)}")
-                        continue
-                    
-                    # Если текст пришёл целой фразой (например, из text_generator)
-                    if isinstance(chunk, str):
-                        # Отдаём сразу всю фразу
-                        self.output_to_screen(text)
-                        yield tts_pb2.StreamSynthesisRequest(
-                            synthesis_input=tts_pb2.SynthesisInput(text=text + " ")
-                        )
-                    else:
-                        # Иначе накапливаем по словам
-                        self.buffer += text
+
+                    # if isinstance(chunk, str):
+                    #     # Если пришла строка (например, из text_generator)
+                    #     text = chunk
+                    # elif isinstance(chunk, dict) and chunk.get('type') == 'text':
+                    #     # Если пришёл словарь (из основного потока)
+                    #     text = chunk['content']
+                    # else:
+                    #     print(f"Неподдерживаемый тип чанка: {type(chunk)}")
+                    #     continue
+
+
+                    if chunk['type'] == 'text':
+                        self.buffer += chunk['content']
                         if any(p in self.buffer for p in ['.', '!', '?', ',']):
                             print("bufer1:", self.buffer)
                             self.output_to_screen(self.buffer)
@@ -256,8 +248,7 @@ class YaSpeechKit:
                                 synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
                             )
                             self.buffer = ""
-
-                # Остаток буфера после цикла (для случая со словами)
+                            
                 if self.buffer:
                     print("bufer2:", self.buffer)
                     self.output_to_screen(self.buffer)
@@ -265,40 +256,6 @@ class YaSpeechKit:
                         synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
                     )
                     self.buffer = ""
-
-
-
-                # # Отправляем текст частями из DeepSeek
-                # for chunk in text_stream:
-
-                #     if isinstance(chunk, str):
-                #         # Если пришла строка (например, из text_generator)
-                #         text = chunk
-                #     elif isinstance(chunk, dict) and chunk.get('type') == 'text':
-                #         # Если пришёл словарь (из основного потока)
-                #         text = chunk['content']
-                #     else:
-                #         print(f"Неподдерживаемый тип чанка: {type(chunk)}")
-                #         continue
-
-
-                #     if chunk['type'] == 'text':
-                #         self.buffer += chunk['content']
-                #         if any(p in self.buffer for p in ['.', '!', '?', ',']):
-                #             print("bufer1:", self.buffer)
-                #             self.output_to_screen(self.buffer)
-                #             yield tts_pb2.StreamSynthesisRequest(
-                #                 synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
-                #             )
-                #             self.buffer = ""
-                            
-                # if self.buffer:
-                #     print("bufer2:", self.buffer)
-                #     self.output_to_screen(self.buffer)
-                #     yield tts_pb2.StreamSynthesisRequest(
-                #         synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
-                #     )
-                #     self.buffer = ""
 
 
             if SAVE_FILE:
