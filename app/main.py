@@ -221,10 +221,10 @@ def main() -> None:
         elif status_button_ip_off == True and cache_param.get_turnon_ip_btn():
             """ Долго держу кнопку IP для выключения """
             i = cache_param.get_i()
-            display.add_display_task({"block": "line", "text": f"Выключусь через {i}"})
+            display.add_display_task({"block": "line", "text": f"ИИ: Выключусь через {i}"})
             cache_param.counting_i() # Уменьшение на -1
             if i == 0:
-                display.add_display_task({"block": "line", "text": f"выключаюсь("})
+                display.add_display_task({"block": "line", "text": f"ИИ: Выключаюсь("})
                 time.sleep(3)
                 display._clear_display()
                 command = ["sudo", "poweroff"]
@@ -250,7 +250,7 @@ def main() -> None:
 
         if status_button_speek == True and not speechkit.get_recording_active():
             """ Нажатие кнопки - SPEEK """
-            display.add_display_task({"block": "line", "text": "СЛУШАЮ!"})
+            display.add_display_task({"block": "line", "text": "ИИ: СЛУШАЮ!"})
             speechkit.change_recording_active(True)
 
             # Запуск в отдельном потоке
@@ -267,19 +267,26 @@ def main() -> None:
             if record_thread:
                 record_thread.join()
 
-                trans_text = speechkit.get_last_transcription()
-                if trans_text: display.add_display_task({"block": "line", "text": f"Я: {trans_text}"})
+                # trans_text = speechkit.get_last_transcription()
+                # if trans_text: display.add_display_task({"block": "line", "text": f"Я: {trans_text}"})
 
                 input_question = speechkit.get_last_transcription()
-                print("input_question:", input_question)
+                # print("input_question:", input_question)
                 if not input_question:
                     audio.play_audio("./wavs/bormochish.wav")
-                    display.add_display_task({"block": "line", "text": "Не разобрал!"})
-                    print("Нет транскрибированного текста.. ")
+                    display.add_display_task({"block": "line", "text": "ИИ: Не разобрал!"})
+                    # print("Нет транскрибированного текста.. ")
                     continue
                 
+
+
+                if input_question: display.add_display_task({"block": "line", "text": f"Я: {input_question}"})
                 text_stream_ds = deepseek.stream_llm_response(input_question)
                 speechkit.stream_synthesis(text_stream_ds)
+
+                answer = deepseek.get_last_answer()
+                if answer: display.add_display_task({"block": "line", "text": f"ИИ: {answer}"})
+
                 record_thread = None
 
 

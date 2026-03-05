@@ -26,6 +26,7 @@ class DeepSeek:
         self.tool_choice = "auto"
         # self.max_tokens = 1000
         # self.temperature = 0.7
+        self.last_full_answer = ""
 
 
     @staticmethod
@@ -367,6 +368,12 @@ class DeepSeek:
                 full_answer += delta.content
             
         self._add_dialog(text, full_answer)
+        self.last_full_answer = full_answer
+
+
+
+    def get_last_answer(self):
+         return self.last_full_answer
 
 
 
