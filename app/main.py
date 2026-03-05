@@ -298,7 +298,7 @@ def main() -> None:
             display.add_display_task({"block": "sys", "text": current_ip})
             cache_param._clear_last()
             time.sleep(3) # Время задержки SSH IP на экране
-            display.clear_area(0, 22, 128, 32) # Зачищаю sys
+            display.clear_area(0, 44, 128, 64) # Зачищаю sys
             cache_param.change_turnon_ip_btn(True)
 
         elif status_button_ip_off == True and cache_param.get_turnon_ip_btn():
