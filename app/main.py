@@ -30,7 +30,7 @@ record_thread = None
 
 
 # Приветствие:
-display.add_display_task({"block": "line", "text": "██▓▒░  ELIZABET  ░▒▓██"})
+display.add_display_task({"block": "line", "text": "██▓▒░   ELIZABET   ░▒▓██"})
 audio.play_audio("./wavs/1.wav")
 #speechkit.stream_synthesis("ООО приветики, пистолетики")
 
@@ -168,10 +168,10 @@ class CachingParameters:
                     audio.play_audio("./wavs/4.wav")
                 self.ip_value = ip_value
 
-            print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
-            print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
-            print(f"Использовано ОЗУ: {total.percent}%")
-            print(f"Загрузка CPU: {cpu_percent}%")
+            # print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
+            # print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
+            # print(f"Использовано ОЗУ: {total.percent}%")
+            # print(f"Загрузка CPU: {cpu_percent}%")
 
 
 
