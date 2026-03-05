@@ -46,7 +46,7 @@ class Audio:
             return False
         
     def get_gain(self):
-        return self.gain
+        return int(self.gain)
     
     def set_gain(self, value: int):
         self.gain = value

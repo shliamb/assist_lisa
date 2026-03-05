@@ -109,6 +109,7 @@ class CachingParameters:
         self.last_level = "" # Последний уровень сети WIFI
         self.last_us_ram = 0 # Последний объем занятой памяти
         self.last_volume = 0 # Последний уровень громкости
+        self.ip_value = "" # Последнее значение IP
     
     def update_sys_display(self):
         """ Вывод на экран системных параметров с кэшированием """
@@ -120,7 +121,6 @@ class CachingParameters:
                 display.add_display_task({"block": "icon", "name": level})
                 self.last_level = level
 
-
             """ Вывод RAM """
             used_ram = total.percent
             if self.last_us_ram != used_ram:
@@ -129,19 +129,29 @@ class CachingParameters:
                 self.last_us_ram = used_ram
 
             """ Вывод VOLUME """
-            volume = 10
+            volume = audio.get_gain()
             if self.last_volume != volume:
                 display.add_display_task({"block": "icon", "name": "ico_vol"})
                 display.add_display_task({"block": "volume", "text": volume})
                 self.last_volume = volume
 
-            print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
-            print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
-            print(f"Использовано ОЗУ: {total.percent}%")
-            print(f"Загрузка CPU: {cpu_percent}%")
+            """ Проверка IP адреса """
+            ip_value = net.get_ip()
+            if self.ip_value != ip_value:
+                if not ip_value:
+                    display.add_display_task({"block": "line", "text": "вай-фай не подключён"})
+                    audio.play_audio("./wavs/2.wav")
+                elif ip_value:
+                    display.add_display_task({"block": "line", "text": "вай-фай подключён"})
+                    audio.play_audio("./wavs/4.wav")
+                self.ip_value = ip_value
 
-            # gc.collect()
 
+
+            # print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
+            # print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
+            # print(f"Использовано ОЗУ: {total.percent}%")
+            # print(f"Загрузка CPU: {cpu_percent}%")
 
 
 
@@ -191,35 +201,10 @@ def main() -> None:
 
 
 
-
-
-
-        get_ip = net.get_ip() ### !!!!????
-
-        
-
-        if not get_ip:
-            #image("вай-фай не подключён", 5, 10)
-            display.add_display_task({"block": "line", "text": "вай-фай не подключён"})
-            audio.play_audio("./wavs/2.wav")
-
-            flag_ip = 0
-            
-        elif flag_ip == 0 and get_ip:
-            audio.play_audio("./wavs/4.wav")
-            flag_ip = 1
-
-
-
         if status_button_ip_off == True and flag_off > 11 :
             audio.play_audio("./wavs/3.wav")
             display.add_display_task({"block": "line", "text": "выключаюсь("})
-
-            
             time.sleep(2)
-            flag_ip = 0
-            flag_off = 0
-            #image("    ", 5, 20)
             command = ["sudo", "poweroff"]
             command = ["sudo", "poweroff"]
 
@@ -241,7 +226,8 @@ def main() -> None:
             proc.communicate(input = SUDO_PASS + "\n", timeout=30)            
 
         elif flag_off < 10 and flag_false > 0 :
-            display.add_display_task({"block": "line", "text": get_ip})
+            ip_value = net.get_ip()
+            display.add_display_task({"block": "line", "text": ip_value})
             flag_off = 0
             flag_false = 0
 
@@ -258,7 +244,7 @@ def main() -> None:
         recording_active = speechkit.get_recording_active()
 
         if status_button_speek == True and not recording_active:
-            display.add_display_task({"block": "line", "text": "ГОВОРИ!"})
+            display.add_display_task({"block": "line", "text": "СЛУШАЮ!"})
             speechkit.change_recording_active(True)
 
             # Запуск в отдельном потоке
