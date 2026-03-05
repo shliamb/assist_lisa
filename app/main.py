@@ -289,8 +289,6 @@ def main() -> None:
         cache_param.update_sys_display()
 
 
-
-
         if status_button_ip_off == True and not cache_param.get_turnon_ip_btn():
             """ Нажатие кнопки IP и Вывод SSH IP """
             current_ip = f"SSH IP: {net.get_ip()}"
