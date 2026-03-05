@@ -266,13 +266,15 @@ def main() -> None:
             if record_thread:
                 record_thread.join()
 
-                print(speechkit.get_last_transcription())
+                trans_text = speechkit.get_last_transcription()
+                if trans_text: display.add_display_task({"block": "line", "text": trans_text})
 
                 input_question = speechkit.get_last_transcription()
                 print("input_question:", input_question)
                 if not input_question:
                     audio.play_audio("./wavs/bormochish.wav")
-                    print("Нет транс текста.. ")
+                    display.add_display_task({"block": "line", "text": "Не разобрал!"})
+                    print("Нет транскрибированного текста.. ")
                     continue
                 
                 text_stream_ds = deepseek.stream_llm_response(input_question)
