@@ -30,8 +30,8 @@ record_thread = None
 
 # Приветствие:
 display.add_display_task({"block": "line", "text": "█▓▒░ ELIZABET ░▒▓█"})
-#audio.play_audio("./wavs/1.wav")
-speechkit.stream_synthesis("ООО приветики, пистолетики")
+audio.play_audio("./wavs/1.wav")
+#speechkit.stream_synthesis("ООО приветики, пистолетики")
 
 
 
@@ -311,7 +311,7 @@ def main() -> None:
                                     # Визуальный вывод (опционально)
                                     print(content, end='', flush=True)
 
-                                    speechkit.stream_synthesis(content)
+                                    speechkit.stream_synthesis({'type': 'text', 'content': content})
 
                                     # tp.add_to_buffer(content)
                                     # process_tts_buffer(force_flush=False)
@@ -345,7 +345,7 @@ def main() -> None:
                                             # Будет ошибка, ждет генератор..
                                             print(answer)
 
-                                            speechkit.stream_synthesis(answer)
+                                            speechkit.stream_synthesis({'type': 'text', 'content': answer})
 
                                             # clear_answer = tp.auto_process(answer)
                                             # answer_llm_queue.put(clear_answer)
