@@ -6,8 +6,7 @@ import subprocess
 from luma.core.interface.serial import i2c
 from luma.oled.device import ssd1306
 from PIL import Image, ImageDraw, ImageFont
-from config import port, address, screen_height, screen_width, font_name, font_size, blocks, icons, letter_width, letter_height, line_height, MAX_LINE_LENGTH, TRUNCATE_AT
-
+from config import MOTHERBOARD, port, address, screen_height, screen_width, font_name, font_size, blocks, icons, letter_width, letter_height, line_height, MAX_LINE_LENGTH, TRUNCATE_AT
 
 
 
@@ -28,6 +27,7 @@ class Display:
 
     def __init__(self):
         """ Инициализация дисплея и его настроек """
+        self.matherboard = MOTHERBOARD
         self.serial = i2c(port=port, address=address)
         self.device = ssd1306(self.serial, width=screen_width, height=screen_height)
         self._create_new_image() # Создаем новое изображение 
@@ -186,6 +186,7 @@ class Display:
 
         def run_loop():
             last_line_text = None
+            last_line2_text = None  # для хранения предпоследней строки
             
             while True:
                 try:
@@ -197,14 +198,33 @@ class Display:
                     block = task.get("block")
                     text = task.get("text", "")
                     
-                    if block == "line":
-                        # Move previous line to line2
+
+
+                    if self.matherboard == "ORANGE":
+                        if block == "line":
+                            # Move previous line to line2
+                            if last_line_text:
+                                render_block("line2", truncate_text(last_line_text))
+                            
+                            # Draw new line to line1
+                            render_block("line1", truncate_text(text))
+                            last_line_text = text
+
+                    if self.matherboard == "RASPBERRY":
+                        # Сдвигаем всё вниз
+                        if last_line2_text:
+                            render_block("line3", truncate_text(last_line2_text))
+                        
                         if last_line_text:
                             render_block("line2", truncate_text(last_line_text))
                         
-                        # Draw new line to line1
+                        # Новая строка
                         render_block("line1", truncate_text(text))
+                        
+                        # Обновляем историю
+                        last_line2_text = last_line_text
                         last_line_text = text
+
 
                     elif block == "icon":
                         # Ожидаем, что в task будет ключ "name"

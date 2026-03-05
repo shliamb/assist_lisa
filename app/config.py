@@ -81,7 +81,7 @@ I_TURN_OFF = 5 # Таймер отключения устройства
 
 
 
-# Размеченные блоки на экране:
+# Размеченные блоки на экране для ORANGE:
 """ На экране 3 строки по 10 пикселей высотой 128 длиной.
     1. Текст приходит на line.
     Cтарый текст смещается с line1 на line2, а новый на line1 и т. д. 
@@ -102,27 +102,70 @@ I_TURN_OFF = 5 # Таймер отключения устройства
     
 
 """
+if MOTHERBOARD == "RASPBERRY":
+    # blocks = {
+    # # line:
+    #     "line1": {"x": 0, "y": 0},
+    #     "line2": {"x": 0, "y": line_height},
+    #     "line3": {"x": 0, "y": line_height * 2},
+
+    # # sys:
+    #     "sys": {"x": 0, "y": 22},
+    # # signal:
+    #     "high_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
+    #     "mid_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
+    #     "low_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
+    #     "no_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
+    # # ram:
+    #     "ram": {"x": 12, "y": 24, "w": 8, "h": 8},
+    #     "size_ram": {"x": 20, "y": 23, "w": 20, "h": 8},
+    # # vol:
+    #     "ico_vol": {"x": 53, "y": 24, "w": 8, "h": 8},
+    #     "volume": {"x": 62, "y": 23, "w": 15, "h": 8},
+    # }
+
+    blocks = {
+    # line:
+        "line1": {"x": 0, "y": 0},
+        "line2": {"x": 0, "y": line_height},
+        "line3": {"x": 0, "y": line_height * 2},
+
+    # sys:
+        "sys": {"x": 0, "y": 44},
+    # signal:
+        "high_signal": {"x": 0, "y": 48, "w": 8, "h": 8},
+        "mid_signal": {"x": 0, "y": 48, "w": 8, "h": 8},
+        "low_signal": {"x": 0, "y": 48, "w": 8, "h": 8},
+        "no_signal": {"x": 0, "y": 48, "w": 8, "h": 8},
+    # ram:
+        "ram": {"x": 12, "y": 24, "w": 8, "h": 8},
+        "size_ram": {"x": 20, "y": 46, "w": 20, "h": 8},
+    # vol:
+        "ico_vol": {"x": 53, "y": 48, "w": 8, "h": 8},
+        "volume": {"x": 62, "y": 46, "w": 15, "h": 8},
+    }
 
 
-blocks = {
-# line:
-    "line1": {"x": 0, "y": 0},
-    "line2": {"x": 0, "y": line_height},
+elif MOTHERBOARD == "ORANGE":
+    blocks = {
+    # line:
+        "line1": {"x": 0, "y": 0},
+        "line2": {"x": 0, "y": line_height},
 
-# sys:
-    "sys": {"x": 0, "y": 22},
-# signal:
-    "high_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
-    "mid_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
-    "low_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
-    "no_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
-# ram:
-    "ram": {"x": 12, "y": 24, "w": 8, "h": 8},
-    "size_ram": {"x": 20, "y": 23, "w": 20, "h": 8},
-# vol:
-    "ico_vol": {"x": 53, "y": 24, "w": 8, "h": 8}, #  "ico_vol": {"x": 47, "y": 24, "w": 8, "h": 8},
-    "volume": {"x": 62, "y": 23, "w": 15, "h": 8}, # "volume": {"x": 56, "y": 23, "w": 15, "h": 8},
-}
+    # sys:
+        "sys": {"x": 0, "y": 22},
+    # signal:
+        "high_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
+        "mid_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
+        "low_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
+        "no_signal": {"x": 0, "y": 24, "w": 8, "h": 8},
+    # ram:
+        "ram": {"x": 12, "y": 24, "w": 8, "h": 8},
+        "size_ram": {"x": 20, "y": 23, "w": 20, "h": 8},
+    # vol:
+        "ico_vol": {"x": 53, "y": 24, "w": 8, "h": 8}, #  "ico_vol": {"x": 47, "y": 24, "w": 8, "h": 8},
+        "volume": {"x": 62, "y": 23, "w": 15, "h": 8}, # "volume": {"x": 56, "y": 23, "w": 15, "h": 8},
+    }
 
 icons = {
     # Каждый список — 8 строк по 8 бит (1=белый пиксель)
