@@ -155,7 +155,7 @@ class CachingParameters:
             volume = audio.get_volume()
             if self.last_volume != volume:
                 display.add_display_task({"block": "icon", "name": "ico_vol"})
-                display.add_display_task({"block": "volume", "text": volume})
+                display.add_display_task({"block": "volume", "text": f"{volume}%"})
                 self.last_volume = volume
 
             """ Проверка наличия инета """
@@ -169,10 +169,10 @@ class CachingParameters:
                     audio.play_audio("./wavs/4.wav")
                 self.there_is_internet = there_is_internet
 
-            print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
-            print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
-            print(f"Использовано ОЗУ: {total.percent}%")
-            print(f"Загрузка CPU: {cpu_percent}%")
+            # print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
+            # print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
+            # print(f"Использовано ОЗУ: {total.percent}%")
+            # print(f"Загрузка CPU: {cpu_percent}%")
 
 
 

@@ -186,7 +186,7 @@ class Display:
 
         def run_loop():
             last_line_text = None
-            last_line2_text = None  # для хранения предпоследней строки
+            #last_line2_text = None  # для хранения предпоследней строки
             
             while True:
                 try:
