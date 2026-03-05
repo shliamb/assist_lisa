@@ -1,6 +1,7 @@
 from config import BUTTON_OFF_IP, BUTTON_SPEEK, SUDO_PASS, CACHE_SEC_DISP, I_TURN_OFF
 from network import Network
 import time
+from typing import Generator, Iterator, Optional
 from buttons import Gpio
 from deepseek import DeepSeek
 from speechkit import YaSpeechKit
@@ -175,7 +176,7 @@ class CachingParameters:
 
 
 
-def worker_ds(intent, input_question):
+def worker_ds(input_question: str) -> Generator[dict, None, None]:
 
     #
     agent = "general_agent"
