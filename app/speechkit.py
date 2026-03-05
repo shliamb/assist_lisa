@@ -10,6 +10,8 @@ import yandex.cloud.ai.tts.v3.tts_service_pb2_grpc as tts_service_pb2_grpc
 import yandex.cloud.ai.stt.v3.stt_pb2 as stt_pb2
 import yandex.cloud.ai.stt.v3.stt_service_pb2_grpc as stt_service_pb2_grpc
 
+from main import display
+
 
 
 
@@ -20,6 +22,7 @@ class YaSpeechKit:
         # PUSH BUTTON ACT:
         self.record_process = None
         self.recording_active = False
+        self.display = display
 
         # META:
         self.auth_meta = (("authorization", f"Api-key {YANDEX}"),)
@@ -46,6 +49,11 @@ class YaSpeechKit:
 
     def change_recording_active(self, status: bool):
         self.recording_active = status
+
+
+    def output_to_screen(self, bufer: str):
+        if bufer: self.display.add_display_task({"block": "line", "text": f"ИИ: {bufer}"})
+
 
 
     # ЗАПИСЬ С МИКРОЫФОНА В СТРИМЕНГЕ
@@ -217,12 +225,14 @@ class YaSpeechKit:
                         self.buffer += chunk['content']
                         if any(p in self.buffer for p in ['.', '!', '?', ',']):
                             print("bufer1:", self.buffer)
+                            self.output_to_screen(self.buffer)
                             yield tts_pb2.StreamSynthesisRequest(
                                 synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
                             )
                             self.buffer = ""
                 if self.buffer:
                     print("bufer2:", self.buffer)
+                    self.output_to_screen(self.buffer)
                     yield tts_pb2.StreamSynthesisRequest(
                         synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
                     )

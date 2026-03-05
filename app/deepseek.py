@@ -357,7 +357,7 @@ class DeepSeek:
 
 
 
-    def stream_llm_response(self, text: str, display) -> Generator[dict, None, None]:
+    def stream_llm_response(self, text: str) -> Generator[dict, None, None]:
         """Запрос в режиме стрим к DeepSeek короткая версия"""
         full_answer = ""
         for chunk in self._call_request(text):
@@ -365,7 +365,6 @@ class DeepSeek:
             if delta: answer_chank = delta.content
             if answer_chank:
                 yield {'type': 'text', 'content': answer_chank}
-                display.add_display_task({"block": "line", "text": f"ИИ: {answer_chank}"})
                 full_answer += answer_chank
             
         self._add_dialog(text, full_answer)
