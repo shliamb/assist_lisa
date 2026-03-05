@@ -174,10 +174,20 @@ class YaSpeechKit:
 
 
     # СИНТЕЗ ГОЛОСОВОГО ОТВЕТА ОТ LLM
-    def stream_synthesis(self, text_stream: Generator[dict, None, None]):
-        """Потоковый/Стриминговый Синтез Речи"""
+    def stream_synthesis(self, text_stream: Generator[dict, None, None] | str):
+        """Потоковый/Стриминговый Синтез Речи из генератора или гтового str"""
         cred = grpc.ssl_channel_credentials()
         auth_meta = self.auth_meta
+
+        # Если строка — оборачиваем в генератор
+        if isinstance(text_stream, str):
+            # Если строка — превращаем в генератор с одним элементом
+            def text_generator():
+                yield {'type': 'text', 'content': text_stream}
+            text_stream = text_generator()
+        else:
+            # Если уже генератор — используем как есть
+            text_stream = text_stream
 
         # Запускаем play с чтением из stdin
         play_process = subprocess.Popen(
