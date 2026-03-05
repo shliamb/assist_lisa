@@ -36,7 +36,7 @@ elif MOTHERBOARD == "ORANGE":
 HISTORY_LIMIT = 20
 
 # AUDIO:
-GAIN = 10  # от -60 до 20 dB
+VOLUME = 80 # %
 
 
 # YANDEX SpeechKit:
@@ -76,7 +76,7 @@ line_height = 10
 # Сокращение строки на экран
 MAX_LINE_LENGTH = 25 # Максимальное допустимое значение символов в строке
 TRUNCATE_AT = 23 # Сокращает до 23 и ставит ..
-CACHE_SEC_DISP = 3 # Проверяет для вывода данных на экран каждые 3 секунды
+CACHE_SEC_DISP = 5 # Проверяет для вывода данных на экран каждые 3 секунды
 I_TURN_OFF = 5 # Таймер отключения устройства
 
 

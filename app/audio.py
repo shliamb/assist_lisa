@@ -1,14 +1,15 @@
 import subprocess
 import time
 import os
-from config import GAIN
+from common import percent_to_gain
+from config import VOLUME
 
 
 
 
 class Audio:
     def __init__(self):
-        self.gain = GAIN
+        self.volume = VOLUME
 
 
     def play_audio(self, filename: str) -> bool:
@@ -20,7 +21,7 @@ class Audio:
             gain_db - усиление в дБ (по умолчанию 20)
         """
 
-        gain_db = self.gain
+        gain_db = percent_to_gain(self.volume)
 
         # Проверяем, существует ли файл
         if not os.path.exists(filename):
@@ -45,11 +46,11 @@ class Audio:
             print("Ошибка: play не найден. Установите sox: sudo apt install sox")
             return False
         
-    def get_gain(self):
-        return int(self.gain)
+    def get_volume(self):
+        return int(self.volume)
     
-    def set_gain(self, value: int):
-        self.gain = value
+    def set_volume(self, value: int):
+        self.volume = value
 
 
 

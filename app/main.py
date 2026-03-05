@@ -53,7 +53,7 @@ def run_tasks_actions():
         if command == "set_volume":
             volume = task.get('volume')
             #print(f"\nВыполняю: set_volume {volume}")
-            if audio.set_gain(volume):
+            if audio.set_volume(volume):
                 #print(f"\nВыполнено: set_volume {volume}")
                 display.add_display_task({"block": "line", "text": f"set_volume {volume}"})
         
@@ -152,7 +152,7 @@ class CachingParameters:
                 self.last_us_ram = used_ram
 
             """ Вывод VOLUME """
-            volume = audio.get_gain()
+            volume = audio.get_volume()
             if self.last_volume != volume:
                 display.add_display_task({"block": "icon", "name": "ico_vol"})
                 display.add_display_task({"block": "volume", "text": volume})
@@ -169,10 +169,13 @@ class CachingParameters:
                     audio.play_audio("./wavs/4.wav")
                 self.there_is_internet = there_is_internet
 
-            # print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
-            # print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
-            # print(f"Использовано ОЗУ: {total.percent}%")
-            # print(f"Загрузка CPU: {cpu_percent}%")
+            print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
+            print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
+            print(f"Использовано ОЗУ: {total.percent}%")
+            print(f"Загрузка CPU: {cpu_percent}%")
+
+
+
 
 
 
