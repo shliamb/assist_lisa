@@ -310,7 +310,7 @@ def main() -> None:
                                     # Визуальный вывод (опционально)
                                     print(content, end='', flush=True)
 
-                                    speechkit.stream_synthesis(content)
+                                    #speechkit.stream_synthesis(content)
                                     # tp.add_to_buffer(content)
                                     # process_tts_buffer(force_flush=False)
                             
