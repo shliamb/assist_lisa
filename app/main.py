@@ -175,6 +175,110 @@ class CachingParameters:
 
 
 
+def worker_ds(intent, input_question):
+
+    #
+    agent = "general_agent"
+    system, tools = deepseek.get_tools(agent)
+
+    # Извлекаем роутинг вне условия для лучшей читаемости
+    router_result = deepseek.hybrid_router(input_question)
+
+    intent = router_result.get("intent", "CHAT")  # Значение по умолчанию
+    display.add_display_task({"block": "line", "text": f"ИИ: {intent}"})
+
+
+    try:
+        if intent == "ACTION":
+            # Обработка ACTION с tools
+            stream_events = deepseek.refine_stream_tools(
+                question=input_question,
+                system=system,
+                tools=tools
+            )
+            
+            for event in stream_events:
+                event_type = event.get('type')
+                
+                if event_type == 'text':
+                    content = event.get('content', '')
+                    if content:
+                        # Визуальный вывод (опционально)
+                        print(content, end='', flush=True)
+
+                        #speechkit.stream_synthesis(content)
+                        yield {'type': 'text', 'content': content}
+
+                        # tp.add_to_buffer(content)
+                        # process_tts_buffer(force_flush=False)
+                
+                elif event_type == 'tool':
+                    # # Завершаем текущую озвучку перед выполнением инструмента
+                    # process_tts_buffer(force_flush=True)
+                    
+                    tool_data = event.get('data', {})
+                    for tool_id, tool_info in tool_data.items():
+                        try:
+                            # Безопасный парсинг аргументов
+                            args = json.loads(tool_info.get('arguments', '{}'))
+                            tool_name = tool_info.get('name', '')
+                            
+                            if tool_name:
+                                answer = ""
+                                # Вызываем функцию и добавляем задачу в очередь
+                                result_function = deepseek.call_function(tool_name, args)
+
+                                if result_function.get("queue"):
+                                    agent_task_queue.put(result_function) # В очередь таск на выполнение
+                                    print(f"[ACTION] Добавлена задача в очередь: {tool_name}({args})")
+                                    answer = "Просьба выполнена"
+                                elif not result_function.get("queue"):
+                                    answer = result_function.get("value", "Данных нет")
+                                else:
+                                    answer = "Ошибка, функция настроена не верно"
+
+                                # В очередь на озвучку
+                                # Будет ошибка, ждет генератор..
+                                print(answer)
+
+                                #speechkit.stream_synthesis(answer)
+                                yield {'type': 'text', 'content': answer}
+
+                                # clear_answer = tp.auto_process(answer)
+                                # answer_llm_queue.put(clear_answer)
+                                # # Сохраняю диалог tools
+                                # ds._add_dialog(question=answer_stt, answer=answer)
+
+                        except json.JSONDecodeError as e:
+                            print(f"[ERROR] Ошибка парсинга JSON аргументов: {e}")
+                        except Exception as e:
+                            print(f"[ERROR] Ошибка обработки tool: {e}")
+                
+                elif event_type == 'usage':
+                    #process_tts_buffer(force_flush=True)
+                    usage_data = event.get('data', {})
+                    #print(f"[USAGE] Статистика: {usage_data}")
+                
+                elif event_type == 'error':
+                    # Обработка ошибок из стрима
+                    error_msg = event.get('content', 'Неизвестная ошибка')
+                    print(f"[ERROR]: Ошибка в стриме: {error_msg}")
+                    # Можно добавить fallback ответ
+                    display.add_display_task({"block": "line", "text": "[ERROR]: Произошла ошибка при обработке запроса."})
+                    #tp.add_to_buffer("[ERROR]: Произошла ошибка при обработке запроса.")
+                    #process_tts_buffer(force_flush=True)
+        
+        else:  # CHAT или любой другой intent
+            # Обработка обычного чата без tools
+            return deepseek.stream_llm_response(input_question)
+            #speechkit.stream_synthesis(text_stream_ds)
+
+
+    except Exception as e:
+        print(f"[ERROR] Критическая ошибка в основном цикле: {e}")
+        # Fallback ответ при критической ошибке
+        display.add_display_task({"block": "line", "text": "Произошла системная ошибка."})
+
 
 
 
@@ -282,105 +386,14 @@ def main() -> None:
                 display.add_display_task({"block": "line", "text": f"Я: {input_question}"})
 
                 # 
-                agent = "general_agent"
-                system, tools = deepseek.get_tools(agent)
+                # agent = "general_agent"
+                # system, tools = deepseek.get_tools(agent)
 
-                # Извлекаем роутинг вне условия для лучшей читаемости
-                router_result = deepseek.hybrid_router(input_question)
-                #print(f"\nRouter Intent: {router_result}")
-                intent = router_result.get("intent", "CHAT")  # Значение по умолчанию
-                display.add_display_task({"block": "line", "text": f"ИИ: {intent}"})
-
-
-
-                try:
-                    if intent == "ACTION":
-                        # Обработка ACTION с tools
-                        stream_events = deepseek.refine_stream_tools(
-                            question=input_question,
-                            system=system,
-                            tools=tools
-                        )
-                        
-                        for event in stream_events:
-                            event_type = event.get('type')
-                            
-                            if event_type == 'text':
-                                content = event.get('content', '')
-                                if content:
-                                    # Визуальный вывод (опционально)
-                                    print(content, end='', flush=True)
-
-                                    speechkit.stream_synthesis(content)
-
-                                    # tp.add_to_buffer(content)
-                                    # process_tts_buffer(force_flush=False)
-                            
-                            elif event_type == 'tool':
-                                # # Завершаем текущую озвучку перед выполнением инструмента
-                                # process_tts_buffer(force_flush=True)
-                                
-                                tool_data = event.get('data', {})
-                                for tool_id, tool_info in tool_data.items():
-                                    try:
-                                        # Безопасный парсинг аргументов
-                                        args = json.loads(tool_info.get('arguments', '{}'))
-                                        tool_name = tool_info.get('name', '')
-                                        
-                                        if tool_name:
-                                            answer = ""
-                                            # Вызываем функцию и добавляем задачу в очередь
-                                            result_function = deepseek.call_function(tool_name, args)
-
-                                            if result_function.get("queue"):
-                                                agent_task_queue.put(result_function) # В очередь таск на выполнение
-                                                print(f"[ACTION] Добавлена задача в очередь: {tool_name}({args})")
-                                                answer = "Просьба выполнена"
-                                            elif not result_function.get("queue"):
-                                                answer = result_function.get("value", "Данных нет")
-                                            else:
-                                                answer = "Ошибка, функция настроена не верно"
-
-                                            # В очередь на озвучку
-                                            # Будет ошибка, ждет генератор..
-                                            print(answer)
-
-                                            speechkit.stream_synthesis(answer)
-
-                                            # clear_answer = tp.auto_process(answer)
-                                            # answer_llm_queue.put(clear_answer)
-                                            # # Сохраняю диалог tools
-                                            # ds._add_dialog(question=answer_stt, answer=answer)
-
-                                    except json.JSONDecodeError as e:
-                                        print(f"[ERROR] Ошибка парсинга JSON аргументов: {e}")
-                                    except Exception as e:
-                                        print(f"[ERROR] Ошибка обработки tool: {e}")
-                            
-                            elif event_type == 'usage':
-                                #process_tts_buffer(force_flush=True)
-                                usage_data = event.get('data', {})
-                                #print(f"[USAGE] Статистика: {usage_data}")
-                            
-                            elif event_type == 'error':
-                                # Обработка ошибок из стрима
-                                error_msg = event.get('content', 'Неизвестная ошибка')
-                                print(f"[ERROR]: Ошибка в стриме: {error_msg}")
-                                # Можно добавить fallback ответ
-                                display.add_display_task({"block": "line", "text": "[ERROR]: Произошла ошибка при обработке запроса."})
-                                #tp.add_to_buffer("[ERROR]: Произошла ошибка при обработке запроса.")
-                                #process_tts_buffer(force_flush=True)
-                    
-                    else:  # CHAT или любой другой intent
-                        # Обработка обычного чата без tools
-                        text_stream_ds = deepseek.stream_llm_response(input_question)
-                        speechkit.stream_synthesis(text_stream_ds)
-
-
-                except Exception as e:
-                    print(f"[ERROR] Критическая ошибка в основном цикле: {e}")
-                    # Fallback ответ при критической ошибке
-                    display.add_display_task({"block": "line", "text": "Произошла системная ошибка."})
+                # # Извлекаем роутинг вне условия для лучшей читаемости
+                # router_result = deepseek.hybrid_router(input_question)
+                # #print(f"\nRouter Intent: {router_result}")
+                # intent = router_result.get("intent", "CHAT")  # Значение по умолчанию
+                # display.add_display_task({"block": "line", "text": f"ИИ: {intent}"})
 
 
 
@@ -395,11 +408,13 @@ def main() -> None:
 
 
 
-                # text_stream_ds = deepseek.stream_llm_response(input_question)
-                # speechkit.stream_synthesis(text_stream_ds)
+                text_stream_ds = worker_ds(input_question)
 
-                # answer = deepseek.get_last_answer()
-                # if answer: display.add_display_task({"block": "line", "text": f"ИИ: {answer}"})
+                #text_stream_ds = deepseek.stream_llm_response(input_question)
+
+
+                speechkit.stream_synthesis(text_stream_ds)
+
 
                 record_thread = None
 
