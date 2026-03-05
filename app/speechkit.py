@@ -219,6 +219,7 @@ class YaSpeechKit:
                 yield tts_pb2.StreamSynthesisRequest(options=synthesis_options)
                 
                 if SAVE_FILE:
+                    """При этом условии, text_stream - просто str"""
                     yield tts_pb2.StreamSynthesisRequest(
                         synthesis_input=tts_pb2.SynthesisInput(text=text_stream + " ")
                     )
@@ -227,22 +228,52 @@ class YaSpeechKit:
 
                 # Отправляем текст частями из DeepSeek
                 for chunk in text_stream:
-                    if chunk['type'] == 'text':
-                        self.buffer += chunk['content']
+
+                    try:
+                        if not isinstance(chunk, dict):
+                            print(f"Пропущен не-словарь: {chunk}")
+                            continue
+                            
+                        if chunk.get('type') != 'text':
+                            print(f"Пропущен не-text чанк: {chunk}")
+                            continue
+                            
+                        content = chunk.get('content')
+                        if not content:
+                            continue
+
+
+                        self.buffer += content
+                        
                         if any(p in self.buffer for p in ['.', '!', '?', ',']):
                             print("bufer1:", self.buffer)
-                            self.output_to_screen(self.buffer)
                             yield tts_pb2.StreamSynthesisRequest(
                                 synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
                             )
                             self.buffer = ""
-                if self.buffer:
-                    print("bufer2:", self.buffer)
-                    self.output_to_screen(self.buffer)
-                    yield tts_pb2.StreamSynthesisRequest(
-                        synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
-                    )
-                    self.buffer = ""
+
+
+                    #     if chunk['type'] == 'text':
+                    #         self.buffer += chunk['content']
+                    #         if any(p in self.buffer for p in ['.', '!', '?', ',']):
+                    #             print("bufer1:", self.buffer)
+                    #             self.output_to_screen(self.buffer)
+                    #             yield tts_pb2.StreamSynthesisRequest(
+                    #                 synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
+                    #             )
+                    #             self.buffer = ""
+
+                    # if self.buffer:
+                    #     print("bufer2:", self.buffer)
+                    #     self.output_to_screen(self.buffer)
+                    #     yield tts_pb2.StreamSynthesisRequest(
+                    #         synthesis_input=tts_pb2.SynthesisInput(text=self.buffer + " ")
+                    #     )
+                    #     self.buffer = ""
+
+                    except Exception as e:
+                        print(f"Ошибка в обработке чанка: {e}")
+                        continue
 
 
             if SAVE_FILE:

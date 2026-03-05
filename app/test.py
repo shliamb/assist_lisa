@@ -505,13 +505,6 @@ class CachingParameters:
 
 
 
-
-
-
-
-
-
-
 def main():
 
     """ Заупуск основной функции и цикла
