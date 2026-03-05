@@ -311,8 +311,8 @@ def main() -> None:
                                     # Визуальный вывод (опционально)
                                     print(content, end='', flush=True)
 
-                                    #speechkit.stream_synthesis({'type': 'text', 'content': content})
-                                    yield {'type': 'text', 'content': content}
+                                    speechkit.stream_synthesis(content)
+
                                     # tp.add_to_buffer(content)
                                     # process_tts_buffer(force_flush=False)
                             
@@ -345,8 +345,7 @@ def main() -> None:
                                             # Будет ошибка, ждет генератор..
                                             print(answer)
 
-                                            yield {'type': 'text', 'content': answer}
-                                            #speechkit.stream_synthesis({'type': 'text', 'content': answer})
+                                            speechkit.stream_synthesis(answer)
 
                                             # clear_answer = tp.auto_process(answer)
                                             # answer_llm_queue.put(clear_answer)
