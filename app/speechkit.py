@@ -10,15 +10,12 @@ import yandex.cloud.ai.tts.v3.tts_service_pb2_grpc as tts_service_pb2_grpc
 import yandex.cloud.ai.stt.v3.stt_pb2 as stt_pb2
 import yandex.cloud.ai.stt.v3.stt_service_pb2_grpc as stt_service_pb2_grpc
 
-from main import display
-
-
 
 
 
 
 class YaSpeechKit:
-    def __init__(self):
+    def __init__(self, display):
         # PUSH BUTTON ACT:
         self.record_process = None
         self.recording_active = False

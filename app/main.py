@@ -11,12 +11,11 @@ import queue
 from display import Display
 import threading
 
-
+display = Display()
 button = Gpio()
-speechkit = YaSpeechKit()
+speechkit = YaSpeechKit(display)
 audio = Audio()
 deepseek = DeepSeek()
-display = Display()
 net = Network()
 total = psutil.virtual_memory()
 cpu_percent = psutil.cpu_percent(interval=1)
