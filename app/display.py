@@ -200,30 +200,30 @@ class Display:
                     
 
 
-                    if self.matherboard == "ORANGE":
-                        if block == "line":
-                            # Move previous line to line2
-                            if last_line_text:
-                                render_block("line2", truncate_text(last_line_text))
-                            
-                            # Draw new line to line1
-                            render_block("line1", truncate_text(text))
-                            last_line_text = text
-
-                    if self.matherboard == "RASPBERRY":
-                        # Сдвигаем всё вниз
-                        if last_line2_text:
-                            render_block("line3", truncate_text(last_line2_text))
-                        
+                    # if self.matherboard == "ORANGE":
+                    if block == "line":
+                        # Move previous line to line2
                         if last_line_text:
                             render_block("line2", truncate_text(last_line_text))
                         
-                        # Новая строка
+                        # Draw new line to line1
                         render_block("line1", truncate_text(text))
-                        
-                        # Обновляем историю
-                        last_line2_text = last_line_text
                         last_line_text = text
+
+                    # if self.matherboard == "RASPBERRY":
+                    #     # Сдвигаем всё вниз
+                    #     if last_line2_text:
+                    #         render_block("line3", truncate_text(last_line2_text))
+                        
+                    #     if last_line_text:
+                    #         render_block("line2", truncate_text(last_line_text))
+                        
+                    #     # Новая строка
+                    #     render_block("line1", truncate_text(text))
+                        
+                    #     # Обновляем историю
+                    #     last_line2_text = last_line_text
+                    #     last_line_text = text
 
 
                     elif block == "icon":
