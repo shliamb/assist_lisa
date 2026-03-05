@@ -1,4 +1,4 @@
-from config import BUTTON_OFF_IP, BUTTON_SPEEK, SUDO_PASS, CACHE_SEC_DISP, I_TURN_OFF
+from config import BUTTON_OFF_IP, BUTTON_SPEEK, SUDO_PASS, CACHE_SEC_DISP, I_TURN_OFF, INTERNET_CONTROL
 from network import Network
 import time
 from typing import Generator, Iterator, Optional
@@ -30,7 +30,7 @@ record_thread = None
 
 
 # INTRO:
-text_intro = "██▓▒░   ELIZABET   ░▒▓██"
+text_intro = "██▓▒░  ASSISTENT 1.0  ░▒▓██"
 display.add_display_task({"block": "line", "text": text_intro})
 audio.play_audio("./wavs/1.wav")
 #speechkit.stream_synthesis("ООО приветики, пистолетики")
@@ -101,6 +101,7 @@ class CachingParameters:
         """ Выключение устройства """
         self.i = I_TURN_OFF # Счетчик выключения устройства
         self.turnon_ip_btn = False # Флаг нажата ли кнопка IP
+        self.inet_control = 0 # Колличество неприрывной фиксации отсуствия или присуствия инета
 
     def get_i(self):
         return self.i
@@ -160,14 +161,28 @@ class CachingParameters:
 
             """ Проверка наличия инета """
             there_is_internet = net.is_internet_connection()
-            if self.there_is_internet != there_is_internet:
-                if not there_is_internet:
-                    display.add_display_task({"block": "line", "text": "ИИ: вай-фай не подключён"})
-                    audio.play_audio("./wavs/2.wav")
-                elif there_is_internet:
-                    display.add_display_task({"block": "line", "text": "ИИ: вай-фай подключён"})
-                    audio.play_audio("./wavs/4.wav")
-                self.there_is_internet = there_is_internet
+            """ Не озвучиваю о наличии или отсуствии инета, пока не будет 
+                факта 5 раз подряд отсуствия или присуствия """
+            if there_is_internet:
+                self.inet_control += 1
+            else:
+                self.inet_control -= 1
+
+            print("inet_control:", self.inet_control)
+
+            if self.inet_control == INTERNET_CONTROL or self.inet_control == -(INTERNET_CONTROL):
+                if self.there_is_internet != there_is_internet:
+                    if not there_is_internet:
+                        display.add_display_task({"block": "line", "text": "ИИ: вай-фай не подключён"})
+                        audio.play_audio("./wavs/2.wav")
+                    elif there_is_internet:
+                        display.add_display_task({"block": "line", "text": "ИИ: вай-фай подключён"})
+                        audio.play_audio("./wavs/4.wav")
+                    self.there_is_internet = there_is_internet
+
+                self.inet_control = 0
+
+
 
             # print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
             # print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")

@@ -6,7 +6,7 @@ load_dotenv()
 
 
 # MATHERBOARD (ORANGE or RASPBERRY):
-MOTHERBOARD = "RASPBERRY"  # или "RASPBERRY"
+MOTHERBOARD = "ORANGE"  # или "RASPBERRY"
 
 # RASPBERRY:
 if MOTHERBOARD == "RASPBERRY":
@@ -62,6 +62,9 @@ SYS_CON = """
 TOOLS_ANSWER = "done"
 
 
+# NET:
+INTERNET_CONTROL = 5 # 
+
 
 ## DISPLAY:
 address = 0x3C
@@ -78,7 +81,6 @@ MAX_LINE_LENGTH = 25 # Максимальное допустимое значе�
 TRUNCATE_AT = 23 # Сокращает до 23 и ставит ..
 CACHE_SEC_DISP = 5 # Проверяет для вывода данных на экран каждые 3 секунды
 I_TURN_OFF = 5 # Таймер отключения устройства
-
 
 
 # Размеченные блоки на экране для ORANGE:

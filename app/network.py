@@ -103,7 +103,7 @@ class Network:
             return None
 
 
-    def is_internet_connection(self):
+    def is_internet_connection(self) -> bool:
         """ Прверяем наличие подключения и наличия интеренета """
         try:
             # Смотрим текущее подключение
