@@ -63,7 +63,7 @@ TOOLS_ANSWER = "done"
 
 
 # NET:
-INTERNET_CONTROL = 5 # 
+INTERNET_CONTROL = 3 #  Число последовательных проверок наличия инета есть/нету до вывода информации
 
 
 ## DISPLAY:
