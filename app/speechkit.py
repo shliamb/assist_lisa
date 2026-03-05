@@ -185,9 +185,8 @@ class YaSpeechKit:
             def text_generator():
                 yield {'type': 'text', 'content': text_stream}
             text_stream = text_generator()
-        else:
-            # Если уже генератор — используем как есть
-            text_stream = text_stream
+
+        print("\ntext_stream:", text_stream, "\ntype:", type(text_stream) )
 
         # Запускаем play с чтением из stdin
         play_process = subprocess.Popen(
