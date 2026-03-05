@@ -191,6 +191,9 @@ def main() -> None:
 
 
 
+
+
+
     while True:
 
         # Проверка очереди задач агента и выполнение:
@@ -205,9 +208,7 @@ def main() -> None:
 
 
 
-        button_status = cache_param.get_turnon_ip_btn() # Все еще нажата?
-
-        if status_button_ip_off == True and not button_status:
+        if status_button_ip_off == True and not cache_param.get_turnon_ip_btn():
             """ Нажатие кнопки IP и Вывод SSH IP """
             current_ip = f"SSH IP: {net.get_ip()}"
             display.add_display_task({"block": "sys", "text": current_ip})
@@ -216,10 +217,10 @@ def main() -> None:
             display.clear_area(0, 22, 128, 32) # Зачищаю sys
             cache_param.change_turnon_ip_btn(True)
 
-        if status_button_ip_off == True and button_status:
-            """ Долго держу кнопку IP """
+        if status_button_ip_off == True and cache_param.get_turnon_ip_btn():
+            """ Долго держу кнопку IP для выключения """
             i = cache_param.get_i()
-            display.add_display_task({"block": "line", "text": f"Power off after {i}"})
+            display.add_display_task({"block": "line", "text": f"Выключусь через {i}"})
             cache_param.counting_i() # Уменьшение на -1
             if i == 0:
                 display.add_display_task({"block": "line", "text": f"выключаюсь("})
@@ -246,8 +247,8 @@ def main() -> None:
 
 
 
-        # Нажатие кнопки - SPEEK:
         if status_button_speek == True and not speechkit.get_recording_active():
+            """ Нажатие кнопки - SPEEK """
             display.add_display_task({"block": "line", "text": "СЛУШАЮ!"})
             speechkit.change_recording_active(True)
 
@@ -255,14 +256,17 @@ def main() -> None:
             record_thread = threading.Thread(target=speechkit.stream_mic_record)
             record_thread.start()
 
-        # Разжатие кнопки SPEEK:
+
         elif status_button_speek == False and speechkit.get_recording_active():
+            """ Разжатие кнопки SPEEK """
             time.sleep(2)
             print("Останавливаю запись...")
             speechkit.change_recording_active(False)
             
             if record_thread:
                 record_thread.join()
+
+                print(speechkit.get_last_transcription())
 
                 input_question = speechkit.get_last_transcription()
                 print("input_question:", input_question)
@@ -277,6 +281,9 @@ def main() -> None:
 
 
         time.sleep(0.1)
+
+
+
 
 
 
