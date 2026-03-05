@@ -1,4 +1,4 @@
-from config import BUTTON_OFF_IP, BUTTON_SPEEK, SUDO_PASS, CACHE_SEC_DISP, I_TURN_OFF, INTERNET_CONTROL
+from config import BUTTON_OFF_IP, BUTTON_SPEEK, SUDO_PASS, CACHE_SEC_DISP, I_TURN_OFF, INTERNET_CONTROL, MOTHERBOARD
 from network import Network
 import time
 from typing import Generator, Iterator, Optional
@@ -30,7 +30,7 @@ record_thread = None
 
 
 # INTRO:
-text_intro = "██▓▒░  ASSISTENT 1.0  ░▒▓██"
+text_intro = "█▓▒░ ASSISTENT 1.0 ░▒▓█"
 display.add_display_task({"block": "line", "text": text_intro})
 audio.play_audio("./wavs/1.wav")
 #speechkit.stream_synthesis("ООО приветики, пистолетики")
@@ -313,7 +313,10 @@ def main() -> None:
             display.add_display_task({"block": "sys", "text": current_ip})
             cache_param._clear_last()
             time.sleep(3) # Время задержки SSH IP на экране
-            display.clear_area(0, 44, 128, 64) # Зачищаю sys
+            if MOTHERBOARD == "RASPBERRY":
+                display.clear_area(0, 44, 128, 64) # Зачищаю sys
+            if MOTHERBOARD == "ORANGE":
+                display.clear_area(0, 22, 128, 32) # Зачищаю sys
             cache_param.change_turnon_ip_btn(True)
 
         elif status_button_ip_off == True and cache_param.get_turnon_ip_btn():

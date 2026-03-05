@@ -36,7 +36,7 @@ elif MOTHERBOARD == "ORANGE":
 HISTORY_LIMIT = 20
 
 # AUDIO:
-VOLUME = 80 # %
+VOLUME = 50 # %  80
 
 
 # YANDEX SpeechKit:
