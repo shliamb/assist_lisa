@@ -1,4 +1,4 @@
-from config import BUTTON_OFF_IP, BUTTON_SPEEK, SUDO_PASS, CACHE_SEC_DISP
+from config import BUTTON_OFF_IP, BUTTON_SPEEK, SUDO_PASS, CACHE_SEC_DISP, I_TURN_OFF
 from network import Network
 import time
 from buttons import Gpio
@@ -23,12 +23,13 @@ cpu_percent = psutil.cpu_percent(interval=1)
 
 button.on_amp() # Включили усилитель звука, пока так ..
 
-
 # Очередь событий выставленных ИИ Агентом на исполнение
 agent_task_queue = queue.Queue(maxsize=20)
 
 
-
+# Приветствие:
+display.add_display_task({"block": "line", "text": "█▓▒░ ELIZABET ░▒▓█"})
+audio.play_audio("./wavs/1.wav")
 
 
 
@@ -93,7 +94,24 @@ class CachingParameters:
         self.last_volume = 0 # Последний уровень громкости
         self.ip_value = "" # Последнее значение IP адреса
         self.cache_sec = CACHE_SEC_DISP # Время кэширования
+        """ Выключение устройства """
+        self.i = I_TURN_OFF # Счетчик выключения устройства
+        self.turnon_ip_btn = False # Флаг нажата ли кнопка IP
 
+    def get_i(self):
+        return self.i
+    
+    def clear_i(self):
+        self.i = I_TURN_OFF
+
+    def counting_i(self):
+        self.i -= 1
+    
+    def get_turnon_ip_btn(self):
+        return self.turnon_ip_btn
+    
+    def change_turnon_ip_btn(self, status):
+        self.turnon_ip_btn = status
 
     def _check_time(self):
         """ Проверка времени кэша """
@@ -147,8 +165,6 @@ class CachingParameters:
                     audio.play_audio("./wavs/4.wav")
                 self.ip_value = ip_value
 
-
-
             # print(f"Всего ОЗУ: {total.total // 1024 // 1024} MB")
             # print(f"Свободно ОЗУ: {total.available // 1024 // 1024} MB")
             # print(f"Использовано ОЗУ: {total.percent}%")
@@ -168,20 +184,14 @@ def main() -> None:
 
     """ Заупуск основной функции и цикла
         вносится или удаляется из списка цикла вывода экрана
-        реакция на кнопки """
+        реакция на кнопки все-все-все.."""
     
     cache_param = CachingParameters()
 
-    # Приветствие:
-    display.add_display_task({"block": "line", "text": "█▓▒░ ELIZABET ░▒▓█"})
-    audio.play_audio("./wavs/1.wav")
-
 
     # МОИ ЛЮБИМЫЕ ФЛАГИ:
-    flag_ip = 0
     flag_off = 0
     flag_false = 0
-    flag_memory_get = 0
     recording_active = False
     record_thread = None
 
@@ -202,48 +212,84 @@ def main() -> None:
 
 
 
-        if status_button_ip_off == True and flag_off > 11 :
-            audio.play_audio("./wavs/3.wav")
-            display.add_display_task({"block": "line", "text": "выключаюсь("})
-            time.sleep(2)
-            command = ["sudo", "poweroff"]
-            command = ["sudo", "poweroff"]
+        button_status = cache_param.get_turnon_ip_btn() # Все еще нажата?
 
-            proc = subprocess.Popen(
-                command,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                universal_newlines=True
-            )
-            proc.communicate(input = SUDO_PASS + "\n", timeout=30)
-            proc = subprocess.Popen(
-                command,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                universal_newlines=True
-            )
-            proc.communicate(input = SUDO_PASS + "\n", timeout=30)            
+        if status_button_ip_off == True and not button_status:
+            """ Нажатие кнопки IP и Вывод SSH IP """
+            current_ip = f"SSH IP: {net.get_ip()}"
+            display.add_display_task({"block": "sys", "text": current_ip})
+            cache_param._clear_last()
+            time.sleep(3) # Время задержки SSH IP на экране
+            display.clear_area(0, 22, 128, 32) # Зачищаю sys
+            cache_param.change_turnon_ip_btn(True)
 
-        elif flag_off < 10 and flag_false > 0 :
-            ip_value = net.get_ip()
-            display.add_display_task({"block": "line", "text": ip_value})
-            flag_off = 0
-            flag_false = 0
+        if status_button_ip_off == True and button_status:
+            """ Долго держу кнопку IP """
+            i = cache_param.get_i()
+            # display.add_display_task({"block": "line", "text": f"Power off after {i}"})
+            cache_param.counting_i() # Уменьшение на -1
+            if i == 0:
+                display.add_display_task({"block": "line", "text": f"выключаюсь("})
+                time.sleep(3)
+                display._clear_display()
+                command = ["sudo", "poweroff"]
+                proc = subprocess.Popen(
+                    command,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True
+                )
+                proc.communicate(input = SUDO_PASS + "\n", timeout=30) 
+                break
+            time.sleep(0.9)
 
-        elif status_button_ip_off == True:
-            flag_off += 1
+        if status_button_ip_off == False:
+            """ Отжатие кнопки IP """
+            cache_param.change_turnon_ip_btn(False)
+            cache_param.clear_i()
 
-        elif flag_off > 1 and status_button_ip_off == False:
-            flag_false += 1
+
+
+
+
+
+        # if status_button_ip_off == True and flag_off > 11 :
+        #     audio.play_audio("./wavs/3.wav")
+        #     display.add_display_task({"block": "line", "text": "выключаюсь("})
+        #     time.sleep(2)
+        #     command = ["sudo", "poweroff"]
+
+        #     proc = subprocess.Popen(
+        #         command,
+        #         stdin=subprocess.PIPE,
+        #         stdout=subprocess.PIPE,
+        #         stderr=subprocess.PIPE,
+        #         universal_newlines=True
+        #     )
+        #     proc.communicate(input = SUDO_PASS + "\n", timeout=30)       
+
+        # elif flag_off < 10 and flag_false > 0 :
+        #     ip_value = net.get_ip()
+        #     display.add_display_task({"block": "line", "text": f"SSH: {ip_value}"})
+        #     flag_off = 0
+        #     flag_false = 0
+
+        # elif status_button_ip_off == True:
+        #     flag_off += 1
+
+        # elif flag_off > 1 and status_button_ip_off == False:
+        #     flag_false += 1
             
 
+        
 
 
+        ###### ДИАЛОГ ######
         # Забираем состояние флага активной записи
         recording_active = speechkit.get_recording_active()
 
+        # Нажатие кнопки - SPEEK:
         if status_button_speek == True and not recording_active:
             display.add_display_task({"block": "line", "text": "СЛУШАЮ!"})
             speechkit.change_recording_active(True)
@@ -252,6 +298,7 @@ def main() -> None:
             record_thread = threading.Thread(target=speechkit.stream_mic_record)
             record_thread.start()
 
+        # Разжатие кнопки SPEEK:
         elif status_button_speek == False and recording_active:
             time.sleep(2)
             print("Останавливаю запись...")
